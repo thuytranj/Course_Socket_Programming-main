@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1000</width>
+    <height>800</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QWidget" name="widget" native="true">
+    <property name="geometry">
+     <rect>
+      <x>210</x>
+      <y>130</y>
+      <width>581</width>
+      <height>541</height>
+     </rect>
+    </property>
+    <widget class="QLabel" name="dangky">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>45</y>
+       <width>510</width>
+       <height>131</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Public Sans Black</family>
+       <pointsize>31</pointsize>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">color : rgb(1, 24, 156)</string>
+     </property>
+     <property name="text">
+      <string>REGISTER</string>
+     </property>
+     <property name="textFormat">
+      <enum>Qt::TextFormat::MarkdownText</enum>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignmentFlag::AlignCenter</set>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="Back">
+     <property name="geometry">
+      <rect>
+       <x>110</x>
+       <y>390</y>
+       <width>141</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton
+{
+color: rgb(255, 255, 255);
+font: 10pt &quot;Nunito Medium&quot;;
+border-radius: 15px;
+background-color: rgb(1, 24, 156);
+}
+QPushButton:hover
+{
+color: rgb(1, 24, 156);
+font: 10pt &quot;Nunito Black&quot;;
+background-color: rgb(222, 233, 255);
+border-radius: 15px;
+}
+QPushButton:pressed
+{
+color: rgb(0,0,0);
+font: 10pt &quot;Nunito Medium&quot;;
+border-radius: 15px;
+background-color: rgb(255, 255, 255);
+}</string>
+     </property>
+     <property name="text">
+      <string>Back</string>
+     </property>
+     <property name="autoDefault">
+      <bool>false</bool>
+     </property>
+     <property name="default">
+      <bool>false</bool>
+     </property>
+    </widget>
+    <widget class="QLabel" name="bg">
+     <property name="geometry">
+      <rect>
+       <x>40</x>
+       <y>20</y>
+       <width>501</width>
+       <height>481</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(255, 255, 255);
+border-radius: 20px;</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="password">
+     <property name="geometry">
+      <rect>
+       <x>115</x>
+       <y>240</y>
+       <width>321</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgab(0,0,0,0);
+border : none;
+border-bottom : 2px solid rgb(1, 24, 156);
+color: rgb(0, 0, 0);
+padding-bottom: 1px;</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="maxLength">
+      <number>100</number>
+     </property>
+     <property name="echoMode">
+      <enum>QLineEdit::EchoMode::Password</enum>
+     </property>
+     <property name="placeholderText">
+      <string>Password</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="username">
+     <property name="geometry">
+      <rect>
+       <x>115</x>
+       <y>170</y>
+       <width>321</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgab(0,0,0,0);
+border : none;
+border-bottom : 2px solid rgb(1, 24, 156);
+color: rgb(0, 0, 0);
+padding-bottom: 1px;</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="maxLength">
+      <number>100</number>
+     </property>
+     <property name="echoMode">
+      <enum>QLineEdit::EchoMode::Normal</enum>
+     </property>
+     <property name="placeholderText">
+      <string>Username</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="confirm_password">
+     <property name="geometry">
+      <rect>
+       <x>115</x>
+       <y>310</y>
+       <width>321</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgab(0,0,0,0);
+border : none;
+border-bottom : 2px solid rgb(1, 24, 156);
+color: rgb(0, 0, 0);
+padding-bottom: 1px;</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="maxLength">
+      <number>100</number>
+     </property>
+     <property name="echoMode">
+      <enum>QLineEdit::EchoMode::Password</enum>
+     </property>
+     <property name="placeholderText">
+      <string>Confirm Password</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="register_3">
+     <property name="geometry">
+      <rect>
+       <x>290</x>
+       <y>390</y>
+       <width>141</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton
+{
+color: rgb(255, 255, 255);
+font: 10pt &quot;Nunito Medium&quot;;
+border-radius: 15px;
+background-color: rgb(1, 24, 156);
+}
+QPushButton:hover
+{
+color: rgb(1, 24, 156);
+font: 10pt &quot;Nunito Black&quot;;
+background-color: rgb(222, 233, 255);
+border-radius: 15px;
+}
+QPushButton:pressed
+{
+color: rgb(0,0,0);
+font: 10pt &quot;Nunito Medium&quot;;
+border-radius: 15px;
+background-color: rgb(255, 255, 255);
+}</string>
+     </property>
+     <property name="text">
+      <string>Register</string>
+     </property>
+     <property name="autoDefault">
+      <bool>false</bool>
+     </property>
+     <property name="default">
+      <bool>false</bool>
+     </property>
+    </widget>
+    <zorder>bg</zorder>
+    <zorder>dangky</zorder>
+    <zorder>Back</zorder>
+    <zorder>password</zorder>
+    <zorder>username</zorder>
+    <zorder>confirm_password</zorder>
+    <zorder>register_3</zorder>
+   </widget>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1000</width>
+     <height>24</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
