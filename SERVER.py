@@ -117,7 +117,7 @@ def receive_folder (client_socket, folderName, folderSize):
 
         try:
             # Tạo đường dẫn thư mục đích (dựa trên tên file ZIP, bỏ phần mở rộng)
-            folder_name = os.path.splitext(os.path.basename(filePath))[0]  # Lấy tên file ZIP, bỏ đuôi .zip
+            folder_name = os.path.splitext(os.path.basename(filePath))[0]  
             folder_path = os.path.join(SERVER_FOLDER, folder_name)
             
             # Tạo thư mục nếu chưa tồn tại
@@ -131,35 +131,46 @@ def receive_folder (client_socket, folderName, folderSize):
     except Exception as e:
         print (f"Lỗi khi nhận file: {str(e)}")
 
-def send_file (client_socket, fileName):
+def send_file(client_socket, fileName):
     try:
-        # Tìm kiếm file trong SERVER_FOLDER và tất cả thư mục con
-        filePath = None
+        # Tìm file trong thư mục server
+        filePaths = []
         for root, dirs, files in os.walk(SERVER_FOLDER):
             if fileName in files:
-                filePath = os.path.join(root, fileName)
-                break
+                filePaths.append(os.path.join(root, fileName))
 
-        # Kiểm tra nếu file không tồn tại
-        if filePath is None:
-            client_socket.send(f"ERROR".encode('utf-8'))
-            print(f"File '{fileName}' không tồn tại trong {SERVER_FOLDER}")
+        if not filePaths:
+            client_socket.send(f"ERROR|Không tìm thấy file||END||".encode('utf-8'))
             return
         
-        fileSize = os.path.getsize (filePath)
-        message = f"OK|{fileSize}"
-        client_socket.send (message.encode ('utf-8'))
-        
+        if len(filePaths) > 1:
+            # Nếu có nhiều file, gửi danh sách file
+            file_list_message = "MULTIPLE|" + "|".join(filePaths) + "||END||"
+            client_socket.send(file_list_message.encode('utf-8'))
+            selected_file_index = client_socket.recv(1024).decode('utf-8')
+            try:
+                selected_file_index = int(selected_file_index)
+                filePath = filePaths[selected_file_index]
+            except (ValueError, IndexError):
+                client_socket.send("ERROR|Chọn file không hợp lệ||END||".encode('utf-8'))
+                return
+        else:
+            # Nếu chỉ có một file, chọn file đó
+            filePath = filePaths[0]
+
+        # Gửi thông báo OK và kích thước file
+        fileSize = os.path.getsize(filePath)
+        client_socket.send(f"OK|{fileSize}||END||".encode('utf-8'))
+
+        # Gửi dữ liệu file
         with open(filePath, "rb") as f:
-            sent = 0
-            while True:
-                data = f.read(4096)
-                if not data:
-                    break
-                client_socket.sendall(data)
-                sent += len(data)
+            while chunk := f.read(4096):
+                client_socket.sendall(chunk)
+
     except Exception as e:
-        print (f"Lỗi khi gửi file: {str(e)}")
+        client_socket.send(f"ERROR|{str(e)}||END||".encode('utf-8'))
+
+
 def load_users ():
     users = {}
     if os.path.isfile (USER_DATA_FILE):
@@ -183,7 +194,7 @@ class Server_w (QMainWindow):
         self.serverStorage.clicked.connect(self.server_storage)
 
         # Chạy server trong một luồng riêng
-        self.server_thread = ServerThread("localhost", 10034)
+        self.server_thread = ServerThread("localhost", 10035)
         self.server_thread.start()
 
         # Ẩn TreeView lúc đầu

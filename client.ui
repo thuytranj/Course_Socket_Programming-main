@@ -197,10 +197,10 @@ background-color: rgb(255, 255, 255);
    <widget class="QPushButton" name="fileDownload">
     <property name="geometry">
      <rect>
-      <x>810</x>
+      <x>700</x>
       <y>90</y>
-      <width>101</width>
-      <height>21</height>
+      <width>111</width>
+      <height>23</height>
      </rect>
     </property>
     <property name="styleSheet">
@@ -208,34 +208,76 @@ background-color: rgb(255, 255, 255);
 {
 color: rgb(0, 0, 0);
 font: 12pt &quot;Nunito Medium&quot;;
+border : 1px solid rgb(222, 233, 255);
 background-color: rgb(255, 255, 255);
-border: none;
 }
 QPushButton:hover
 {
 color: rgb(1, 24, 156);
 font: 12pt &quot;Nunito Black&quot;;
 background-color: rgb(222, 233, 255);
+border-radius: 15px;
 }
 QPushButton:pressed
 {
 color: rgb(0,0,0);
 font: 12pt &quot;Nunito Medium&quot;;
+border-radius: 15px;
 background-color: rgb(255, 255, 255);
 }</string>
     </property>
     <property name="text">
-     <string>Download</string>
+     <string>Download file</string>
     </property>
     <property name="icon">
      <iconset>
-      <normaloff>:/image/D:/download.png</normaloff>:/image/D:/download.png</iconset>
+      <normaloff>:/image/file (1).png</normaloff>:/image/file (1).png</iconset>
     </property>
-    <property name="iconSize">
-     <size>
-      <width>23</width>
+    <property name="checkable">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="folderDownload">
+    <property name="geometry">
+     <rect>
+      <x>830</x>
+      <y>90</y>
+      <width>111</width>
       <height>23</height>
-     </size>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton
+{
+color: rgb(0, 0, 0);
+font: 12pt &quot;Nunito Medium&quot;;
+border : 1px solid rgb(222, 233, 255);
+background-color: rgb(255, 255, 255);
+}
+QPushButton:hover
+{
+color: rgb(1, 24, 156);
+font: 12pt &quot;Nunito Black&quot;;
+background-color: rgb(222, 233, 255);
+border-radius: 15px;
+}
+QPushButton:pressed
+{
+color: rgb(0,0,0);
+font: 12pt &quot;Nunito Medium&quot;;
+border-radius: 15px;
+background-color: rgb(255, 255, 255);
+}</string>
+    </property>
+    <property name="text">
+     <string>Download folder</string>
+    </property>
+    <property name="icon">
+     <iconset>
+      <normaloff>:/image/file (1).png</normaloff>:/image/file (1).png</iconset>
+    </property>
+    <property name="checkable">
+     <bool>true</bool>
     </property>
    </widget>
   </widget>

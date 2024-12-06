@@ -1,5 +1,5 @@
 from PyQt6 import QtWidgets, uic
-from PyQt6.QtWidgets import QApplication, QFileDialog, QMainWindow, QMessageBox,  QTreeView, QVBoxLayout
+from PyQt6.QtWidgets import QApplication, QFileDialog, QMainWindow, QMessageBox,  QTreeView, QVBoxLayout, QInputDialog, QLabel
 from PyQt6.QtCore import QThread, pyqtSignal
 from PyQt6.QtGui import QFileSystemModel
 import sys
@@ -82,31 +82,40 @@ class SignUp_w (QMainWindow):
             QMessageBox.warning(self, "Password Error", "Passwords do not match.")
 
 # ========== Progress Bar ==========
-class ProgressBar (QMainWindow):
+class ProgressBar(QMainWindow):
     def __init__(self):
         super(ProgressBar, self).__init__()
         uic.loadUi('progress_bar.ui', self)
+        
+        # Tìm đối tượng QLabel với tên 'labelProgress' trong giao diện
+        self.labelProgress = self.findChild(QLabel, 'labelProgress')
+        
         # Đặt giá trị mặc định cho thanh tiến trình
         self.progressBar.setValue(0)
 
     def update_progress(self, current, total):
-        if total==0:
+        if total == 0:
             return
         percent = int(current * 100 / total)
         self.progressBar.setValue(percent)
-        self.progressBar.setFormat(f"{percent}% Completed")
+        
+        # Cập nhật phần trăm vào QLabel
+        self.labelProgress.setText(f"{percent}% Completed")
+
 
 
 class FileTransferThread(QThread):
     progress_signal = pyqtSignal(int, int)  # Signal: current, total
     finished = pyqtSignal()  # Emits when transfer completes
     error_signal = pyqtSignal(str)  # Signal to emit error message
+    file_selection_signal = pyqtSignal(list) 
 
     def __init__(self, client_socket, filePath, mode):
         super(FileTransferThread, self).__init__()
         self.client_socket = client_socket
         self.filePath = filePath
         self.mode = mode
+        self.selected_file_index = None  
 
     def run(self):
         try:
@@ -116,7 +125,6 @@ class FileTransferThread(QThread):
                 self.download_file()
             elif self.mode == "UPLOADFOLDER":
                 self.upload_folder()
-            self.finished.emit()
         except Exception as e:
             self.error_signal.emit(f"Error in File Transfer Thread: {e}")
             print(f"Error in File Transfer Thread: {e}")
@@ -138,6 +146,7 @@ class FileTransferThread(QThread):
                         self.client_socket.sendall(data)
                         sent += len(data)
                         self.progress_signal.emit(sent, fileSize)  # Emit progress
+                self.finished.emit()
             else:
                 print(response)
                 print("File upload error")
@@ -145,16 +154,31 @@ class FileTransferThread(QThread):
         except Exception as e:
             self.error_signal.emit(f"Error in upload_file: {str(e)}")
             print(f"Error in upload_file: {str(e)}")
-
+    
     def download_file(self):
         try:
             fileName = os.path.basename(self.filePath)
             message = f"DOWNLOAD|{fileName}"
             self.client_socket.send(message.encode("utf-8"))
 
-            response = self.client_socket.recv(1024).decode("utf-8").split('|')
+            # Nhận phản hồi đầu tiên từ server
+            response = self.recv_full_message(self.client_socket).split('|')
+            if response[0] == "ERROR":
+                self.error_signal.emit(response[1])
+                return
+            elif response[0] == "MULTIPLE":
+                # Nếu có nhiều file, hiển thị cho người dùng chọn file
+                files = response[1:]
+                self.file_selection_signal.emit(files)
+                while self.selected_file_index is None:
+                    QThread.msleep(100)  # Chờ người dùng chọn file
+                self.client_socket.send(str(self.selected_file_index).encode("utf-8"))
+                # Nhận phản hồi kích thước file sau khi đã chọn file
+                response = self.recv_full_message(self.client_socket).split('|')
+
             if response[0] == "OK":
-                fileSize = int (response [1])
+                # Nếu chỉ có một file, trực tiếp tải file
+                fileSize = int(response[1])
                 received = 0
                 with open(self.filePath, "wb") as f:
                     while received < fileSize:
@@ -163,16 +187,25 @@ class FileTransferThread(QThread):
                             break
                         f.write(data)
                         received += len(data)
-                        self.progress_signal.emit(received, fileSize)  # Emit progress updates
-                print(f"File '{self.filePath}' downloaded successfully")
+                        self.progress_signal.emit(received, fileSize)  # Cập nhật tiến trình
+                print(f"File '{self.filePath}' đã tải thành công")
+                self.finished.emit()
+                return
             else:
-                print (response)
-                self.error_signal.emit("File does not exist on server")
-                print("File download error")
+                self.error_signal.emit("Lỗi khi tải file")
         except Exception as e:
-            self.error_signal.emit(f"Error in download_file: {str(e)}")
-            print(f"Error in download_file: {str(e)}")
+            self.error_signal.emit(f"Lỗi trong download_file: {str(e)}")
 
+
+    def recv_full_message(self, socket, delimiter="||END||"):
+        data = b""
+        while delimiter.encode() not in data:
+            chunk = socket.recv(1024)
+            if not chunk:
+                break
+            data += chunk
+        return data.decode('utf-8').replace(delimiter, "")
+    
     def upload_folder(self):
         try:
             fileName = os.path.basename(self.filePath)
@@ -190,6 +223,7 @@ class FileTransferThread(QThread):
                         self.client_socket.sendall(data)
                         sent += len(data)
                         self.progress_signal.emit(sent, fileSize)  # Emit progress
+                self.finished.emit()
             else:
                 print(response)
                 self.error_signal.emit("Folder upload error")
@@ -213,8 +247,7 @@ class Client_w (QMainWindow):
         self.fileUpload.clicked.connect(self.uploadFile)
         self.fileDownload.clicked.connect(self.downloadFile)
         self.folderUpload.clicked.connect(self.uploadFolder)
-
-
+        self.folderDownload.clicked.connect(self.downloadFolder)
 
     def uploadFile(self):
         filePath, _ = QFileDialog.getOpenFileName(self, "Upload File", "", "All Files (*)")
@@ -229,25 +262,48 @@ class Client_w (QMainWindow):
     def downloadFile(self):
         filePath, _ = QFileDialog.getSaveFileName(self, "Download File", "", "All Files (*)")
         if filePath:
+
             self.download_thread = FileTransferThread(self.client_socket, filePath, "DOWNLOAD")
             self.download_thread.error_signal.connect(self.show_error_message)
             self.download_thread.progress_signal.connect(self.progress_window.update_progress)
 
             # Tín hiệu hoàn thành
             self.download_thread.finished.connect(self.transfer_complete)
-
-            # Cần một tín hiệu lỗi để ngắt kết nối nếu có lỗi
+            self.download_thread.file_selection_signal.connect(self.show_file_selection_dialog)
+            
+            # Tín hiệu lỗi để ngắt kết nối nếu có lỗi
             self.download_thread.error_signal.connect(self._on_error)
 
             self.download_thread.start()
             self.progress_window.show()
+    def downloadFolder (self):
+        # to do
+        pass
+    
     def _on_error(self, error_message):
         """Ngắt kết nối tín hiệu progress_signal và finished khi có lỗi"""
         self.download_thread.finished.disconnect(self.transfer_complete)
         self.download_thread.progress_signal.disconnect(self.progress_window.update_progress)
 
-        # Ẩn hoặc đóng thanh tiến trình
-        self.progress_window.hide()  # Hoặc self.progress_window.close()
+        # Ẩn thanh tiến trình
+        self.progress_window.hide()  
+
+    def show_file_selection_dialog(self, files):
+        self.progress_window.hide()
+        selected_file, ok = QInputDialog.getItem(
+            self,
+            "Select File",
+            "Multiple files found. Please select:",
+            files,
+            0,
+            False
+        )
+        if ok and selected_file:
+            selected_index = files.index(selected_file)
+            self.download_thread.selected_file_index = selected_index
+            self.progress_window.show()
+        else:
+            self.download_thread.error_signal.emit("File selection canceled")
 
     def uploadFolder (self):
         folderPath = QFileDialog.getExistingDirectory(self, "Select Folder to Upload", "")
@@ -324,7 +380,7 @@ class MainApp (QtWidgets.QStackedWidget):
 if __name__ == "__main__":
 
     IP='localhost'
-    PORT=10034
+    PORT=10035
 
     try:
         client_socket = socket.socket (socket.AF_INET, socket.SOCK_STREAM)

@@ -180,13 +180,13 @@ border-radius: 10px;
       <string notr="true">QPushButton
 {
 color: rgb(0, 0, 0);
-font: 14pt &quot;Nunito Medium&quot;;
+font: 12pt &quot;Nunito Medium&quot;;
 border : 1px solid rgb(222, 233, 255);
 }
 QPushButton:hover
 {
 color: rgb(1, 24, 156);
-font: 14pt &quot;Nunito Black&quot;;
+font: 12pt &quot;Nunito Black&quot;;
 background-color: rgb(255, 255, 255);
 border-radius: 10px;
 }</string>
@@ -218,13 +218,13 @@ border-radius: 10px;
       <string notr="true">QPushButton
 {
 color: rgb(0, 0, 0);
-font: 14pt &quot;Nunito Medium&quot;;
+font: 12pt &quot;Nunito Medium&quot;;
 border : 1px solid rgb(222, 233, 255);
 }
 QPushButton:hover
 {
 color: rgb(1, 24, 156);
-font: 14pt &quot;Nunito Black&quot;;
+font: 12pt &quot;Nunito Black&quot;;
 background-color: rgb(255, 255, 255);
 border-radius: 10px;
 }</string>
