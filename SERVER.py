@@ -48,8 +48,9 @@ def handle_client (client_socket, address):
             elif parts[0]=="VIEWFOLDER":
                 get_file(client_socket)
             elif parts[0]=="DOWNLOADFOLDER":
-                zip_folder(parts[1], parts[1] + ".zip")
-                folderName = parts[1][parts[1].rfind('\\'):] if parts[1].rfind('\\') != -1 else parts[1][parts[1].rfind('/'):]
+                folder = os.path.join(SERVER_FOLDER, parts[1])
+                zip_folder(folder, folder + ".zip")
+                folderName = os.path.basename(folder)
                 send_file(client_socket, folderName + ".zip")
             else:
                 print ("Unknown command")
@@ -90,7 +91,7 @@ def get_file(client_socket):
             size = os.path.getsize(full_path)
             name = os.path.join(root.replace(SERVER_FOLDER,'.'), file)
             list_files.append(name + ":" + str(size))
-    result = ', '.join(list_files)
+    result = '$'.join(list_files)
     client_socket.send (result.encode())
 def zip_folder(folder_path,output_path):
     try:
