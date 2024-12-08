@@ -42,6 +42,8 @@ def handle_client (client_socket, address):
                 send_file (client_socket, parts[1])
             elif parts[0]=="UPLOADFOLDER":
                 receive_folder (client_socket, parts[1], int (parts[2]))
+            elif parts[0]=="VIEWFOLDER":
+                get_file(client_socket)
             else: 
                 print ("Unknown command")
                 client_socket.send (b"ERROR: Unknown command.")
@@ -73,7 +75,23 @@ def handle_signup (client_socket, username, password):
         client_socket.send (b"OK")
         print (f"client '{username}' đã đăng ký thành công")
 
-
+def get_file(client_socket):
+    list_files = []
+    for root, dirs, files in os.walk(SERVER_FOLDER):
+        for file in files:
+            full_path = os.path.join(root, file)
+            size = os.path.getsize(full_path)
+            name = os.path.join(root.replace(SERVER_FOLDER,'.'), file)
+            list_files.append(name + ":" + str(size))
+    result = ', '.join(list_files)
+    client_socket.send (result.encode())
+def ZipFolder(folder_path,output_path):
+    try:
+        with az.Archive() as archive:
+            archive.create_entries(folder_path)
+            archive.save(output_path)
+    except Exception as e:
+        print(f"Error while zipping folder: {e}")
 def receive_file (client_socket, fileName, fileSize):
     try:
         # Tạo một hậu tố duy nhất bằng timestamp
