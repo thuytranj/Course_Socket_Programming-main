@@ -8,7 +8,6 @@ import os
 import shutil
 import threading
 import zipfile
-import aspose.zip as az
 
 # ========== Login Window ==========
 class Login_w (QMainWindow):

@@ -1,3 +1,5 @@
+from zipfile import ZipFile
+
 from PyQt6 import QtWidgets, uic
 from PyQt6.QtWidgets import QApplication, QMainWindow, QTableWidgetItem, QHeaderView
 from PyQt6.QtCore import QThread, QTimer
@@ -9,6 +11,7 @@ import shutil
 import threading
 import time
 import zipfile
+import aspose.zip as az
 
 SERVER_FOLDER = "./ServerStorage"
 USER_DATA_FILE = "./user.txt"
@@ -44,7 +47,11 @@ def handle_client (client_socket, address):
                 receive_folder (client_socket, parts[1], int (parts[2]))
             elif parts[0]=="VIEWFOLDER":
                 get_file(client_socket)
-            else: 
+            elif parts[0]=="DOWNLOADFOLDER":
+                zip_folder(parts[1], parts[1] + ".zip")
+                folderName = parts[1][parts[1].rfind('\\'):] if parts[1].rfind('\\') != -1 else parts[1][parts[1].rfind('/'):]
+                send_file(client_socket, folderName + ".zip")
+            else:
                 print ("Unknown command")
                 client_socket.send (b"ERROR: Unknown command.")
         except Exception as e:
@@ -85,7 +92,7 @@ def get_file(client_socket):
             list_files.append(name + ":" + str(size))
     result = ', '.join(list_files)
     client_socket.send (result.encode())
-def ZipFolder(folder_path,output_path):
+def zip_folder(folder_path,output_path):
     try:
         with az.Archive() as archive:
             archive.create_entries(folder_path)
