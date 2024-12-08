@@ -1,3 +1,5 @@
+from zipfile import ZipFile
+
 from PyQt6 import QtWidgets, uic
 from PyQt6.QtWidgets import QApplication, QMainWindow, QTableWidgetItem, QHeaderView
 from PyQt6.QtCore import QThread, QTimer
@@ -9,6 +11,7 @@ import shutil
 import threading
 import time
 import zipfile
+import aspose.zip as az
 
 SERVER_FOLDER = "./ServerStorage"
 USER_DATA_FILE = "./user.txt"
@@ -42,7 +45,13 @@ def handle_client (client_socket, address):
                 send_file (client_socket, parts[1])
             elif parts[0]=="UPLOADFOLDER":
                 receive_folder (client_socket, parts[1], int (parts[2]))
-            else: 
+            elif parts[0]=="VIEWFOLDER":
+                get_file(client_socket)
+            elif parts[0]=="DOWNLOADFOLDER":
+                zip_folder(parts[1], parts[1] + ".zip")
+                folderName = parts[1][parts[1].rfind('\\'):] if parts[1].rfind('\\') != -1 else parts[1][parts[1].rfind('/'):]
+                send_file(client_socket, folderName + ".zip")
+            else:
                 print ("Unknown command")
                 client_socket.send (b"ERROR: Unknown command.")
         except Exception as e:
@@ -73,7 +82,23 @@ def handle_signup (client_socket, username, password):
         client_socket.send (b"OK")
         print (f"client '{username}' đã đăng ký thành công")
 
-
+def get_file(client_socket):
+    list_files = []
+    for root, dirs, files in os.walk(SERVER_FOLDER):
+        for file in files:
+            full_path = os.path.join(root, file)
+            size = os.path.getsize(full_path)
+            name = os.path.join(root.replace(SERVER_FOLDER,'.'), file)
+            list_files.append(name + ":" + str(size))
+    result = ', '.join(list_files)
+    client_socket.send (result.encode())
+def zip_folder(folder_path,output_path):
+    try:
+        with az.Archive() as archive:
+            archive.create_entries(folder_path)
+            archive.save(output_path)
+    except Exception as e:
+        print(f"Error while zipping folder: {e}")
 def receive_file (client_socket, fileName, fileSize):
     try:
         # Tạo một hậu tố duy nhất bằng timestamp

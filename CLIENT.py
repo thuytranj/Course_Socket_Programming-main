@@ -385,6 +385,9 @@ if __name__ == "__main__":
     try:
         client_socket = socket.socket (socket.AF_INET, socket.SOCK_STREAM)
         client_socket.connect ((IP, PORT))
+        client_socket.send(b"VIEWFOLDER")
+        response = client_socket.recv(4096).decode()
+        print(response)
     except Exception as e:
         print ("Cannot connect to server")
         sys.exit()
