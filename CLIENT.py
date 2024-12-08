@@ -463,6 +463,8 @@ class Client_w (QMainWindow):
             if fileOrigin:
                 destinationDownload = filePath
                 filePath = fileOrigin
+            else:
+                destinationDownload = None
 
             self.download_thread = FileTransferThread(self.client_socket, filePath, "DOWNLOAD", destinationDownload)
             self.download_thread.error_signal.connect(self.show_error_message)
