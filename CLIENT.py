@@ -1,14 +1,13 @@
 from PyQt6 import QtWidgets, uic
-from PyQt6.QtWidgets import QApplication, QFileDialog, QMainWindow, QMessageBox, QTreeView, QVBoxLayout, QInputDialog, \
-    QLabel, QStyledItemDelegate, QStyleOptionButton, QStyle
-from PyQt6.QtCore import QThread, pyqtSignal, QRect, Qt, QEvent
-from PyQt6.QtGui import QFileSystemModel, QFont, QStandardItemModel, QStandardItem, QFontMetrics
+from PyQt6.QtWidgets import QApplication, QFileDialog, QMainWindow, QMessageBox, QInputDialog, QLabel
+from PyQt6.QtCore import QThread, pyqtSignal, QTimer
+from PyQt6.QtGui import  QStandardItemModel, QStandardItem
 import sys
 import socket
 import os
 import shutil
 import threading
-import zipfile
+import resource_rc
 
 # ========== Login Window ==========
 class Login_w (QMainWindow):
@@ -104,23 +103,19 @@ class ProgressBar(QMainWindow):
         self.labelProgress.setText(f"{percent}% Completed")
 
 
-
 class FileTransferThread(QThread):
     progress_signal = pyqtSignal(int, int)  # Signal: current, total
     finished = pyqtSignal()  # Emits when transfer completes
     error_signal = pyqtSignal(str)  # Signal to emit error message
-    file_selection_signal = pyqtSignal(list) 
+    file_selection_signal = pyqtSignal(list, str) 
 
-    def __init__(self, client_socket, filePath, mode, downloadDestination = None):
+    def __init__(self, client_socket, filePath="", mode="", folderName=""):
         super(FileTransferThread, self).__init__()
         self.client_socket = client_socket
         self.filePath = filePath
         self.mode = mode
-        self.selected_file_index = None
-        if downloadDestination is None:
-            self.downloadDestination = filePath
-        else:
-            self.downloadDestination = downloadDestination
+        self.folderName = folderName
+        self.selected_file_index = None  
 
     def run(self):
         try:
@@ -161,48 +156,7 @@ class FileTransferThread(QThread):
         except Exception as e:
             self.error_signal.emit(f"Error in upload_file: {str(e)}")
             print(f"Error in upload_file: {str(e)}")
-
-    def download_folder(self):
-        try:
-            fileName = os.path.basename(self.filePath)
-            message = f"DOWNLOADFOLDER|{fileName}"
-            self.client_socket.send(message.encode("utf-8"))
-
-            # Nhận phản hồi đầu tiên từ server
-            response = self.recv_full_message(self.client_socket).split('|')
-            if response[0] == "ERROR":
-                self.error_signal.emit(response[1])
-                return
-            elif response[0] == "MULTIPLE":
-                # Nếu có nhiều file, hiển thị cho người dùng chọn file
-                files = response[1:]
-                self.file_selection_signal.emit(files)
-                while self.selected_file_index is None:
-                    QThread.msleep(100)  # Chờ người dùng chọn file
-                self.client_socket.send(str(self.selected_file_index).encode("utf-8"))
-                # Nhận phản hồi kích thước file sau khi đã chọn file
-                response = self.recv_full_message(self.client_socket).split('|')
-
-            if response[0] == "OK":
-                # Nếu chỉ có một file, trực tiếp tải file
-                fileSize = int(response[1])
-                received = 0
-                with open(self.downloadDestination, "wb") as f:
-                    while received < fileSize:
-                        data = self.client_socket.recv(4096)
-                        if not data:
-                            break
-                        f.write(data)
-                        received += len(data)
-                        self.progress_signal.emit(received, fileSize)  # Cập nhật tiến trình
-                print(f"File '{self.downloadDestination}' đã tải thành công")
-                self.finished.emit()
-                return
-            else:
-                self.error_signal.emit("Lỗi khi tải file")
-        except Exception as e:
-            self.error_signal.emit(f"Lỗi trong download_file: {str(e)}")
-
+    
     def download_file(self):
         try:
             fileName = os.path.basename(self.filePath)
@@ -217,9 +171,9 @@ class FileTransferThread(QThread):
             elif response[0] == "MULTIPLE":
                 # Nếu có nhiều file, hiển thị cho người dùng chọn file
                 files = response[1:]
-                self.file_selection_signal.emit(files)
+                self.file_selection_signal.emit(files, "Files")
                 while self.selected_file_index is None:
-                    QThread.msleep(100)  # Chờ người dùng chọn file
+                    QThread.msleep(3)  # Chờ người dùng chọn file
                 self.client_socket.send(str(self.selected_file_index).encode("utf-8"))
                 # Nhận phản hồi kích thước file sau khi đã chọn file
                 response = self.recv_full_message(self.client_socket).split('|')
@@ -228,7 +182,8 @@ class FileTransferThread(QThread):
                 # Nếu chỉ có một file, trực tiếp tải file
                 fileSize = int(response[1])
                 received = 0
-                with open(self.downloadDestination, "wb") as f:
+
+                with open(self.filePath, "wb") as f:
                     while received < fileSize:
                         data = self.client_socket.recv(4096)
                         if not data:
@@ -236,7 +191,7 @@ class FileTransferThread(QThread):
                         f.write(data)
                         received += len(data)
                         self.progress_signal.emit(received, fileSize)  # Cập nhật tiến trình
-                print(f"File '{self.downloadDestination}' đã tải thành công")
+                print(f"File '{self.filePath}' đã tải thành công")
                 self.finished.emit()
                 return
             else:
@@ -244,15 +199,26 @@ class FileTransferThread(QThread):
         except Exception as e:
             self.error_signal.emit(f"Lỗi trong download_file: {str(e)}")
 
+    
 
     def recv_full_message(self, socket, delimiter="||END||"):
         data = b""
         while delimiter.encode() not in data:
             chunk = socket.recv(1024)
-            if not chunk:
+            if not chunk:  # Nếu không nhận được dữ liệu
                 break
             data += chunk
-        return data.decode('utf-8').replace(delimiter, "")
+            
+        if len(data) == 0:
+            raise Exception("No data received from server")
+            
+        try:
+            decoded_data = data.decode('utf-8').replace(delimiter, "")
+            return decoded_data
+        except UnicodeDecodeError:
+            # Nếu không thể giải mã, trả về dữ liệu gốc dưới dạng byte (dành cho file hoặc dữ liệu nhị phân)
+            return data
+
     
     def upload_folder(self):
         try:
@@ -280,110 +246,70 @@ class FileTransferThread(QThread):
             self.error_signal.emit(f"Error in upload_folder: {str(e)}")
             print(f"Error in upload_foler: {str(e)}")
 
+    def download_folder(self):
+        try:
+            # Đặt đường dẫn thư mục Download mặc định
+            download_folder = os.path.expanduser('~') + '/Downloads' 
 
-class ButtonDelegate(QStyledItemDelegate):
-    def __init__(self, parent=None):
-        super().__init__(parent)
-        self.button_clicked_callback = None
+            # Gửi yêu cầu tải thư mục tới server
+            self.client_socket.sendall(f"DOWNLOADFOLDER|{self.folderName}".encode("utf-8"))
 
-    def paint(self, painter, option, index):
-        super().paint(painter, option, index)
-        if index.column() == 1:
-            button_style_option = QStyleOptionButton()
-            button_style_option.rect = self.get_button_rect(option)
-            button_style_option.state |= QStyle.StateFlag.State_Enabled
-            button_style_option.text = "Download"
+            response = self.client_socket.recv(1024).decode('utf-8').split('|')
+            print (response)
 
-            font = QFont()
-            font.setBold(True)
-            font.setPointSize(10)
+            if response[0] == "ERROR":
+                self.error_signal.emit(response[1])
+                return
 
-            # Replace fontMetrics assignment with creating a QFontMetrics object
-            button_style_option.fontMetrics = QFontMetrics(font)
+            elif response[0] == "MULTIPLE":
+                # Nếu có nhiều thư mục, cho người dùng chọn
+                folders = response[1:]
+                self.file_selection_signal.emit(folders, "Folders")
+                while self.selected_file_index is None:
+                    QThread.msleep(3)  # Chờ người dùng chọn thư mục
+                self.client_socket.send(str(self.selected_file_index).encode("utf-8"))
+                response = self.client_socket.recv(1024).decode('utf-8').split('|')
+                print (response)
 
-            QApplication.style().drawControl(QStyle.ControlElement.CE_PushButton, button_style_option, painter)
+            if response[0] == "OK":
+                print (response)
+                self.progress_signal.emit(0, 100)  
 
-    def sizeHint(self, option, index):
-        size = super().sizeHint(option, index)
-        size.setHeight(size.height() + 40)
-        return size
+                # Nhận kích thước thư mục từ server
+                folder_size = int(response[1])  # Kích thước thư mục (dưới dạng bytes)
+                received = 0
 
-    def get_button_rect(self, option):
-        rect = option.rect
-        button_width = 100
-        button_height = 30
-        button_x = rect.right() - button_width - 10
-        button_y = rect.center().y() - button_height // 2
-        return QRect(button_x, button_y, button_width, button_height)
+                # Đảm bảo thư mục tải về sẽ được lưu vào Downloads
+                target_folder_path = os.path.join(download_folder, self.folderName)
 
-    def editorEvent(self, event, model, option, index):
-        # In PyQt6, use QEvent.Type for event type comparison
-        if event.type() == QEvent.Type.MouseButtonRelease:
-            rect = self.get_button_rect(option)
-            if rect.contains(event.pos()):
-                if self.button_clicked_callback:
-                    self.button_clicked_callback(index)  # Call the callback without expecting a return
-                return True
-        return False
+                # Tiến hành nhận file zip và lưu vào thư mục Downloads
+                with open(f"{target_folder_path}.zip", "wb") as f:
+                    while received < folder_size:
+                        data = self.client_socket.recv(4096)
+                        if not data:
+                            break
+                        f.write(data)
+                        received += len(data)
+                        self.progress_signal.emit(received, folder_size)  # Cập nhật tiến trình
 
-
-def build_tree(data):
-    """Build tree model from file paths and sizes."""
-    model = QStandardItemModel()
-    model.setHorizontalHeaderLabels(["Name", "Size"])
-
-    for entry in data:
-        path, size = entry.split(":")
-        size = int(size)
-
-        parts = path[2:].split("\\")
-        current_item = model.invisibleRootItem()
-
-        for part in parts[:-1]:
-            match = None
-            for i in range(current_item.rowCount()):
-                if current_item.child(i, 0).text() == part:
-                    match = current_item.child(i, 0)
-                    break
-            if not match:
-                match = QStandardItem(part)
-                current_item.appendRow([match, QStandardItem()])
-            current_item = match
-
-        file_item = QStandardItem(parts[-1])
-        size_item = QStandardItem(f"{size} bytes")
-        current_item.appendRow([file_item, size_item])
-
-    return model
+                print(f"Folder '{self.folderName}' đã tải thành công tại {target_folder_path}")
+                self.finished.emit()
+            else:
+                self.error_signal.emit("Lỗi khi tải thư mục")
+        except Exception as e:
+            self.error_signal.emit(f"Error in download_folder: {str(e)}")
+            print(f"Error in download_folder: {str(e)}")
 
 class Client_w (QMainWindow):
-    def __init__ (self, client_socket, list_files):
+    def __init__ (self, client_socket):
         super(Client_w, self).__init__()
         uic.loadUi('client.ui', self)
         self.client_socket = client_socket
         self.progress_window = ProgressBar()
-        self.list_files = list_files
-        self.root_path = '.'
 
         # Variables
         self.upload_thread = None
         self.download_thread = None
-
-        layout = QVBoxLayout(self.space)
-        self.tree_view = QTreeView(self)
-
-        model = build_tree(self.list_files)
-        self.tree_view.setModel(model)
-        layout.addWidget(self.tree_view)
-
-        button_delegate = ButtonDelegate(self.tree_view)
-        button_delegate.button_clicked_callback = self.on_button_clicked
-        self.tree_view.setItemDelegateForColumn(1, button_delegate)
-
-        self.tree_view.setColumnWidth(0, 400)
-        self.tree_view.setColumnWidth(1, 150)
-
-        self.tree_view.expandAll()
 
         # Buttons
         self.fileUpload.clicked.connect(self.uploadFile)
@@ -391,82 +317,89 @@ class Client_w (QMainWindow):
         self.folderUpload.clicked.connect(self.uploadFolder)
         self.folderDownload.clicked.connect(self.downloadFolder)
 
-    def on_button_clicked(self, index):
-        """
-        Handle the button click event and start the download (or any other logic).
+        # Tạo QTimer để cập nhật bảng tự động
+        self.timer = QTimer(self)
+        self.timer.timeout.connect(self.display_files)
+        self.timer.start(5000)
 
-        Args:
-            index (QModelIndex): The index of the clicked item in the tree.
-        """
-        model = index.model()
-        parent_index = index.parent()
+    def pause_timer(self):
+        if self.timer.isActive():
+            self.timer.stop()
 
-        # Get the file name from the first column (index.column() == 0)
-        file_name_index = index.sibling(index.row(), 0)  # Get the item in the first column (file name)
-        file_name = file_name_index.data()
+    def resume_timer(self):
+        if not self.timer.isActive():
+            self.timer.start(5000)
 
-        # Get the size from the second column (index.column() == 1), if you need it
-        size_index = index.sibling(index.row(), 1)  # Get the item in the second column (size)
-        size = size_index.data()
+    def receive_list(self):
+        self.client_socket.send (f"VIEWFOLDER".encode ('utf-8'))
+        data = self.client_socket.recv(1024 * 1024).decode('utf-8')
+        if data.startswith("OK|"):
+            return data[3:].split("|")
+        return []
 
-        # Get the folder path from the parent index, if available
-        if not parent_index.isValid():
-            # Root folder (no parent)
-            download_path = os.path.join(self.root_path, file_name)
-        else:
-            # File inside a folder
-            folder_path = parent_index.data() if parent_index.isValid() else ''
-            download_path = os.path.join(self.root_path, folder_path, file_name)
+    # Hàm xây dựng cây dữ liệu từ danh sách tệp
+    def build_tree(self, file_list):
+        model = QStandardItemModel()
+        model.setHorizontalHeaderLabels(["Name", "Size"])
 
-        print(f"Perfome download: {file_name}")
-        if "." in file_name:
-            self.downloadFile(file_name)
-        else:
-            self.download_folder(file_name)
+        for entry in file_list:
+            path, size = entry.split(":")
+            size = int(size)
+
+            parts = path.split("/")
+            current_item = model.invisibleRootItem()
+
+            for part in parts[:-1]:
+                match = None
+                for i in range(current_item.rowCount()):
+                    if current_item.child(i, 0).text() == part:
+                        match = current_item.child(i, 0)
+                        break
+                if not match:
+                    match = QStandardItem(part)
+                    current_item.appendRow([match, QStandardItem()])
+                current_item = match
+
+            file_item = QStandardItem(parts[-1])
+            size_item = QStandardItem(f"{size} bytes")
+            current_item.appendRow([file_item, size_item])
+
+        return model
+    
+    def display_files(self):
+        # Nhận danh sách tệp từ server
+        file_list = self.receive_list()
+        
+        # Xây dựng cây tệp từ danh sách
+        model = self.build_tree(file_list)  # Sử dụng hàm build_tree
+        self.treeView.setModel(model)  # Gán mô hình cho QTreeView
+
+        # Điều chỉnh độ rộng cột
+        self.treeView.setColumnWidth(0, 750) 
+        self.treeView.setColumnWidth(1, 100) 
+
+        self.treeView.expandAll()
 
     def uploadFile(self):
         filePath, _ = QFileDialog.getOpenFileName(self, "Upload File", "", "All Files (*)")
         if filePath:
-            self.upload_thread = FileTransferThread(self.client_socket, filePath, "UPLOAD")
+            self.pause_timer()  # Tạm dừng cập nhật danh sách file
+
+            self.upload_thread = FileTransferThread(self.client_socket, filePath=filePath, mode="UPLOAD")
             self.upload_thread.error_signal.connect(self.show_error_message)
             self.upload_thread.progress_signal.connect(self.progress_window.update_progress)
             self.upload_thread.finished.connect(self.transfer_complete)
+            self.upload_thread.finished.connect(self.resume_timer)  # Kích hoạt lại QTimer sau khi hoàn tất
+
             self.upload_thread.start()
             self.progress_window.show()
 
-    def download_folder(self, fileOrigin):
+    def downloadFile(self):
+        #self.display_files ()
         filePath, _ = QFileDialog.getSaveFileName(self, "Download File", "", "All Files (*)")
-
         if filePath:
-            if fileOrigin:
-                destinationDownload = filePath
-                filePath = fileOrigin
-
-            self.download_thread = FileTransferThread(self.client_socket, filePath, "DOWNLOADFOLDER", destinationDownload)
-            self.download_thread.error_signal.connect(self.show_error_message)
-            self.download_thread.progress_signal.connect(self.progress_window.update_progress)
-
-            # Tín hiệu hoàn thành
-            self.download_thread.finished.connect(self.transfer_complete)
-            self.download_thread.file_selection_signal.connect(self.show_file_selection_dialog)
-
-            # Tín hiệu lỗi để ngắt kết nối nếu có lỗi
-            self.download_thread.error_signal.connect(self._on_error)
-
-            self.download_thread.start()
-            self.progress_window.show()
-
-    def downloadFile(self, fileOrigin = None):
-        filePath, _ = QFileDialog.getSaveFileName(self, "Download File", "", "All Files (*)")
-
-        if filePath:
-            if fileOrigin:
-                destinationDownload = filePath
-                filePath = fileOrigin
-            else:
-                destinationDownload = None
-
-            self.download_thread = FileTransferThread(self.client_socket, filePath, "DOWNLOAD", destinationDownload)
+            self.pause_timer()  # Tạm dừng cập nhật danh sách file
+            self.download_thread = FileTransferThread(self.client_socket, filePath=filePath, mode="DOWNLOAD")
             self.download_thread.error_signal.connect(self.show_error_message)
             self.download_thread.progress_signal.connect(self.progress_window.update_progress)
 
@@ -475,35 +408,59 @@ class Client_w (QMainWindow):
             self.download_thread.file_selection_signal.connect(self.show_file_selection_dialog)
             
             # Tín hiệu lỗi để ngắt kết nối nếu có lỗi
+            self.signals_connected = True
             self.download_thread.error_signal.connect(self._on_error)
 
+            self.download_thread.finished.connect(self.resume_timer)  # Kích hoạt lại QTimer sau khi hoàn tất
             self.download_thread.start()
             self.progress_window.show()
 
-    def downloadFolder (self):
-        # to do
-        pass
+    def downloadFolder(self):
+        folder_name, ok = QInputDialog.getText(self, "Nhập tên thư mục", "Nhập tên thư mục cần tải:")
+        
+        if ok and folder_name:
+            self.pause_timer()  # Tạm dừng cập nhật danh sách file
+            self.download_thread = FileTransferThread(self.client_socket, mode="DOWNLOADFOLDER", folderName=folder_name)
+            self.download_thread.error_signal.connect(self.show_error_message)
+            self.download_thread.progress_signal.connect(self.progress_window.update_progress)
+
+            self.download_thread.finished.connect(lambda: self.transfer_complete(mode="Folder"))
+            self.download_thread.file_selection_signal.connect(self.show_file_selection_dialog)
+
+            self.signals_connected = True
+            self.download_thread.error_signal.connect(self._on_error)
+
+            self.download_thread.finished.connect(self.resume_timer)  # Kích hoạt lại QTimer sau khi hoàn tất
+            self.download_thread.start()
+            self.progress_window.show()
+
     
     def _on_error(self, error_message):
         """Ngắt kết nối tín hiệu progress_signal và finished khi có lỗi"""
-        self.download_thread.finished.disconnect(self.transfer_complete)
-        self.download_thread.progress_signal.disconnect(self.progress_window.update_progress)
-
+        if hasattr(self, "signals_connected") and self.signals_connected:
+            try:
+                self.download_thread.finished.disconnect(self.transfer_complete)
+                self.download_thread.progress_signal.disconnect(self.progress_window.update_progress)
+                self.signals_connected = False
+            except TypeError as e:
+                print(f"Lỗi khi ngắt kết nối tín hiệu: {e}")
+        
         # Ẩn thanh tiến trình
-        self.progress_window.hide()  
+        self.progress_window.hide()
+  
 
-    def show_file_selection_dialog(self, files):
+    def show_file_selection_dialog(self, list, mode = "Files"):
         self.progress_window.hide()
         selected_file, ok = QInputDialog.getItem(
             self,
-            "Select File",
-            "Multiple files found. Please select:",
-            files,
+            f"Select {mode}",
+            f"Multiple {mode} found. Please select:",
+            list,
             0,
             False
         )
         if ok and selected_file:
-            selected_index = files.index(selected_file)
+            selected_index = list.index(selected_file)
             self.download_thread.selected_file_index = selected_index
             self.progress_window.show()
         else:
@@ -513,6 +470,7 @@ class Client_w (QMainWindow):
         folderPath = QFileDialog.getExistingDirectory(self, "Select Folder to Upload", "")
         if folderPath:
             try:
+                self.pause_timer()  # Tạm dừng cập nhật danh sách file
                 folderName = os.path.basename(folderPath.rstrip(os.sep))
                 # Tạo đường dẫn cho file ZIP
                 zipFilePath = f"{folderName}.zip"
@@ -520,14 +478,15 @@ class Client_w (QMainWindow):
                 # Nén thư mục thành file ZIP
                 shutil.make_archive(folderName, 'zip', folderPath)
 
-                self.upload_thread = FileTransferThread(self.client_socket, zipFilePath, "UPLOADFOLDER")
+                self.upload_thread = FileTransferThread(self.client_socket, filePath=zipFilePath, mode="UPLOADFOLDER")
                 self.upload_thread.error_signal.connect(self.show_error_message)
                 self.upload_thread.progress_signal.connect(self.progress_window.update_progress)
-                self.upload_thread.finished.connect(self.transfer_complete)
+                self.upload_thread.finished.connect(lambda: self.transfer_complete (mode="Folder"))
 
                 # Bắt sự kiện khi file upload hoàn thành để xóa file ZIP
                 self.upload_thread.finished.connect(lambda: self.remove_temp_zip(zipFilePath))
 
+                self.upload_thread.finished.connect(self.resume_timer)  # Kích hoạt lại QTimer sau khi hoàn tất
                 self.upload_thread.start()
                 self.progress_window.show()
                 
@@ -545,10 +504,10 @@ class Client_w (QMainWindow):
         except Exception as e:
             print(f"Error removing temporary zip file: {str(e)}")
 
-    def transfer_complete (self):
+    def transfer_complete (self, mode="File"):
         if self.progress_window:
             self.progress_window.close()  
-        QMessageBox.information(self, "Transfer Complete", "File/Folder transfer finished successfully!")
+        QMessageBox.information(self, "Transfer Complete", f"{mode} transfer finished successfully!")
 
     def closeEvent(self, event):
         try:
@@ -562,13 +521,13 @@ class Client_w (QMainWindow):
         event.accept()
 
 class MainApp (QtWidgets.QStackedWidget):
-    def __init__ (self, client_socket, list_files):
+    def __init__ (self, client_socket):
         super(MainApp, self).__init__()
         self.client_socket = client_socket
 
         self.login_w = Login_w(client_socket, self.switch_window)
         self.signup_w = SignUp_w(client_socket, self.switch_window)
-        self.client_w = Client_w(client_socket, list_files)
+        self.client_w = Client_w(client_socket)
 
         self.addWidget (self.login_w)
         self.addWidget (self.signup_w)
@@ -584,19 +543,16 @@ class MainApp (QtWidgets.QStackedWidget):
 if __name__ == "__main__":
 
     IP='localhost'
-    PORT=10035
+    PORT=10048
 
     try:
         client_socket = socket.socket (socket.AF_INET, socket.SOCK_STREAM)
         client_socket.connect ((IP, PORT))
-        client_socket.send(b"VIEWFOLDER")
-        response = client_socket.recv(4096).decode()
-        print(response)
     except Exception as e:
         print ("Cannot connect to server")
         sys.exit()
 
     app = QApplication(sys.argv)
-    main_app = MainApp(client_socket, response.split('$'))
+    main_app = MainApp(client_socket)
     main_app.show()
     sys.exit(app.exec())

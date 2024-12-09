@@ -1,0 +1,11 @@
+<RCC>
+  <qresource>
+    <file>icon/download.png</file>
+    <file>icon/exit.png</file>
+    <file>icon/file_upload.png</file>
+    <file>icon/folder_upload.png</file>
+    <file>icon/information.png</file>
+    <file>icon/Storage.png</file>
+    <file>icon/folder.png</file>
+  </qresource>
+</RCC>

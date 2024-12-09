@@ -21,7 +21,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>891</width>
+     <width>931</width>
      <height>711</height>
     </rect>
    </property>
@@ -196,7 +196,8 @@ border-radius: 10px;
      </property>
      <property name="icon">
       <iconset>
-       <normaloff>:/image/received.png</normaloff>:/image/received.png</iconset>
+       <normaloff>:/image/received.png</normaloff>
+       <normalon>:/icon/Storage.png</normalon>:/image/received.png</iconset>
      </property>
      <property name="checkable">
       <bool>true</bool>
@@ -234,7 +235,8 @@ border-radius: 10px;
      </property>
      <property name="icon">
       <iconset>
-       <normaloff>:/image/information.png</normaloff>:/image/information.png</iconset>
+       <normalon>:/icon/information.png</normalon>
+      </iconset>
      </property>
      <property name="checkable">
       <bool>true</bool>
@@ -272,7 +274,8 @@ border-radius: 10px;
      </property>
      <property name="icon">
       <iconset>
-       <normaloff>:/image/exit.png</normaloff>:/image/exit.png</iconset>
+       <normaloff>:/image/exit.png</normaloff>
+       <normalon>:/icon/exit.png</normalon>:/image/exit.png</iconset>
      </property>
      <property name="checkable">
       <bool>true</bool>
@@ -413,7 +416,7 @@ border-bottom-right-radius : 10px;
      <rect>
       <x>210</x>
       <y>80</y>
-      <width>631</width>
+      <width>641</width>
       <height>591</height>
      </rect>
     </property>
@@ -423,7 +426,7 @@ border-bottom-right-radius : 10px;
      <rect>
       <x>180</x>
       <y>80</y>
-      <width>671</width>
+      <width>701</width>
       <height>591</height>
      </rect>
     </property>
@@ -436,7 +439,9 @@ border-bottom-right-radius : 10px;
    <zorder>treeView</zorder>
   </widget>
  </widget>
- <resources/>
+ <resources>
+  <include location="resource.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>clientsInfo</sender>
