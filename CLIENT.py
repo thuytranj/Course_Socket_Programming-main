@@ -346,7 +346,7 @@ class Client_w (QMainWindow):
             path, size = entry.split(":")
             size = int(size)
 
-            parts = path.split("/")
+            parts = path.split(os.path.sep)
             current_item = model.invisibleRootItem()
 
             for part in parts[:-1]:
