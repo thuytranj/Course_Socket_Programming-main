@@ -7,7 +7,6 @@ import socket
 import os
 import shutil
 import threading
-import resource_rc
 
 # ========== Login Window ==========
 class Login_w (QMainWindow):
@@ -311,6 +310,9 @@ class Client_w (QMainWindow):
         self.upload_thread = None
         self.download_thread = None
 
+        # Ẩn MenuUpload lúc đầu
+        self.MenuUpload.hide()
+
         # Buttons
         self.fileUpload.clicked.connect(self.uploadFile)
         self.fileDownload.clicked.connect(self.downloadFile)
@@ -534,8 +536,7 @@ class MainApp (QtWidgets.QStackedWidget):
         self.addWidget (self.client_w)
 
         self.setCurrentIndex (0)
-        self.setFixedHeight (800)
-        self.setFixedWidth (1000)
+        self.setFixedSize(890, 710) # Cố định khung
 
     def switch_window (self, index):
         self.setCurrentIndex (index)

@@ -9,7 +9,6 @@ import shutil
 import threading
 import time
 import zipfile
-import resource_rc
 
 
 SERVER_FOLDER = "./ServerStorage"
@@ -269,8 +268,12 @@ class Server_w (QMainWindow):
         super().__init__()
         uic.loadUi("server.ui", self)
 
+        self.setFixedSize(890, 710)
+        
         self.clientsInfo.clicked.connect(self.client_info)
+        self.clientsInfo_2.clicked.connect(self.client_info)
         self.serverStorage.clicked.connect(self.server_storage)
+        self.serverStorage_2.clicked.connect(self.server_storage)
 
         # Chạy server trong một luồng riêng
         self.server_thread = ServerThread("localhost", 10048)

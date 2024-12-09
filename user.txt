@@ -5,4 +5,3 @@ abc|abc
 fhdfhd|1234
 tuvi|tuvi
 abcd|abcd
-nguynthu123|123456789

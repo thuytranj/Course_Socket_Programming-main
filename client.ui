@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1000</width>
-    <height>800</height>
+    <width>890</width>
+    <height>710</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,10 +16,10 @@
   <widget class="QWidget" name="space" native="true">
    <property name="geometry">
     <rect>
-     <x>-20</x>
-     <y>-30</y>
-     <width>1021</width>
-     <height>831</height>
+     <x>0</x>
+     <y>0</y>
+     <width>890</width>
+     <height>710</height>
     </rect>
    </property>
    <property name="styleSheet">
@@ -28,11 +28,14 @@
    <widget class="QWidget" name="menu" native="true">
     <property name="geometry">
      <rect>
-      <x>770</x>
-      <y>630</y>
+      <x>660</x>
+      <y>540</y>
       <width>201</width>
       <height>161</height>
      </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: none</string>
     </property>
     <widget class="QPushButton" name="plusMenu">
      <property name="geometry">
@@ -53,6 +56,7 @@
       <font>
        <family>SimSun-ExtB</family>
        <pointsize>36</pointsize>
+       <weight>50</weight>
        <italic>false</italic>
        <bold>false</bold>
       </font>
@@ -94,7 +98,7 @@ background-color: rgb(255, 255, 255);
       <bool>true</bool>
      </property>
     </widget>
-    <widget class="QWidget" name="Menu" native="true">
+    <widget class="QWidget" name="MenuUpload" native="true">
      <property name="geometry">
       <rect>
        <x>20</x>
@@ -119,21 +123,21 @@ background-color: rgb(255, 255, 255);
        <string notr="true">QPushButton
 {
 color: rgb(0, 0, 0);
-font: 12pt &quot;Nunito Medium&quot;;
+font: 10pt &quot;Nunito Medium&quot;;
 border : 1px solid rgb(222, 233, 255);
 background-color: rgb(255, 255, 255);
 }
 QPushButton:hover
 {
 color: rgb(1, 24, 156);
-font: 12pt &quot;Nunito Black&quot;;
+font: 10pt &quot;Nunito Black&quot;;
 background-color: rgb(222, 233, 255);
 border-radius: 15px;
 }
 QPushButton:pressed
 {
 color: rgb(0,0,0);
-font: 12pt &quot;Nunito Medium&quot;;
+font: 10pt &quot;Nunito Medium&quot;;
 border-radius: 15px;
 background-color: rgb(255, 255, 255);
 }</string>
@@ -143,8 +147,13 @@ background-color: rgb(255, 255, 255);
       </property>
       <property name="icon">
        <iconset>
-        <normaloff>:/image/file (1).png</normaloff>
-        <normalon>:/icon/file_upload.png</normalon>:/image/file (1).png</iconset>
+        <normaloff>icon/file_upload.png</normaloff>icon/file_upload.png</iconset>
+      </property>
+      <property name="iconSize">
+       <size>
+        <width>16</width>
+        <height>16</height>
+       </size>
       </property>
       <property name="checkable">
        <bool>true</bool>
@@ -159,25 +168,34 @@ background-color: rgb(255, 255, 255);
         <height>21</height>
        </rect>
       </property>
+      <property name="font">
+       <font>
+        <family>Nunito Medium</family>
+        <pointsize>10</pointsize>
+        <weight>50</weight>
+        <italic>false</italic>
+        <bold>false</bold>
+       </font>
+      </property>
       <property name="styleSheet">
        <string notr="true">QPushButton
 {
 color: rgb(0, 0, 0);
-font: 12pt &quot;Nunito Medium&quot;;
+font: 10pt &quot;Nunito Medium&quot;;
 border : 1px solid rgb(222, 233, 255);
 background-color: rgb(255, 255, 255);
 }
 QPushButton:hover
 {
 color: rgb(1, 24, 156);
-font: 12pt &quot;Nunito Black&quot;;
+font: 10pt &quot;Nunito Black&quot;;
 background-color: rgb(222, 233, 255);
 border-radius: 15px;
 }
 QPushButton:pressed
 {
 color: rgb(0,0,0);
-font: 12pt &quot;Nunito Medium&quot;;
+font: 10pt &quot;Nunito Medium&quot;;
 border-radius: 15px;
 background-color: rgb(255, 255, 255);
 }</string>
@@ -187,8 +205,13 @@ background-color: rgb(255, 255, 255);
       </property>
       <property name="icon">
        <iconset>
-        <normaloff>:/image/folder (1).png</normaloff>
-        <normalon>:/icon/folder_upload.png</normalon>:/image/folder (1).png</iconset>
+        <normaloff>icon/folder_upload.png</normaloff>icon/folder_upload.png</iconset>
+      </property>
+      <property name="iconSize">
+       <size>
+        <width>16</width>
+        <height>16</height>
+       </size>
       </property>
       <property name="checkable">
        <bool>true</bool>
@@ -199,152 +222,178 @@ background-color: rgb(255, 255, 255);
    <widget class="QPushButton" name="fileDownload">
     <property name="geometry">
      <rect>
-      <x>660</x>
-      <y>60</y>
-      <width>131</width>
-      <height>23</height>
+      <x>746</x>
+      <y>20</y>
+      <width>121</width>
+      <height>21</height>
      </rect>
     </property>
     <property name="styleSheet">
      <string notr="true">QPushButton
 {
 color: rgb(0, 0, 0);
-font: 12pt &quot;Nunito Medium&quot;;
+font: 10pt &quot;Nunito Medium&quot;;
 border : 1px solid rgb(222, 233, 255);
 background-color: rgb(255, 255, 255);
 }
 QPushButton:hover
 {
 color: rgb(1, 24, 156);
-font: 12pt &quot;Nunito Black&quot;;
+font: 10pt &quot;Nunito Black&quot;;
 background-color: rgb(222, 233, 255);
 border-radius: 15px;
 }
 QPushButton:pressed
 {
 color: rgb(0,0,0);
-font: 12pt &quot;Nunito Medium&quot;;
+font: 10pt &quot;Nunito Medium&quot;;
 border-radius: 15px;
 background-color: rgb(255, 255, 255);
 }</string>
     </property>
     <property name="text">
-     <string>Download file</string>
+     <string>File download</string>
     </property>
     <property name="icon">
      <iconset>
-      <normaloff>:/image/file (1).png</normaloff>
-      <normalon>:/icon/download.png</normalon>:/image/file (1).png</iconset>
+      <normaloff>icon/download.png</normaloff>
+      <normalon>:/icon/D:/download.png</normalon>icon/download.png</iconset>
     </property>
-    <property name="checkable">
-     <bool>true</bool>
+    <property name="iconSize">
+     <size>
+      <width>16</width>
+      <height>16</height>
+     </size>
     </property>
    </widget>
    <widget class="QPushButton" name="folderDownload">
     <property name="geometry">
      <rect>
-      <x>810</x>
-      <y>60</y>
+      <x>590</x>
+      <y>20</y>
       <width>141</width>
-      <height>23</height>
+      <height>21</height>
      </rect>
     </property>
     <property name="styleSheet">
      <string notr="true">QPushButton
 {
 color: rgb(0, 0, 0);
-font: 12pt &quot;Nunito Medium&quot;;
+font: 10pt &quot;Nunito Medium&quot;;
 border : 1px solid rgb(222, 233, 255);
 background-color: rgb(255, 255, 255);
 }
 QPushButton:hover
 {
 color: rgb(1, 24, 156);
-font: 12pt &quot;Nunito Black&quot;;
+font: 10pt &quot;Nunito Black&quot;;
 background-color: rgb(222, 233, 255);
 border-radius: 15px;
 }
 QPushButton:pressed
 {
 color: rgb(0,0,0);
-font: 12pt &quot;Nunito Medium&quot;;
+font: 10pt &quot;Nunito Medium&quot;;
 border-radius: 15px;
 background-color: rgb(255, 255, 255);
 }</string>
     </property>
     <property name="text">
-     <string>Download folder</string>
+     <string>Folder download</string>
     </property>
     <property name="icon">
      <iconset>
-      <normaloff>:/image/file (1).png</normaloff>
-      <normalon>:/icon/folder.png</normalon>:/image/file (1).png</iconset>
+      <normaloff>icon/folder.png</normaloff>
+      <normalon>:/icon/D:/icon/folder_download.png</normalon>icon/folder.png</iconset>
     </property>
-    <property name="checkable">
-     <bool>true</bool>
+    <property name="iconSize">
+     <size>
+      <width>16</width>
+      <height>16</height>
+     </size>
     </property>
    </widget>
    <widget class="QTreeView" name="treeView">
     <property name="geometry">
      <rect>
-      <x>50</x>
-      <y>90</y>
-      <width>911</width>
+      <x>24</x>
+      <y>60</y>
+      <width>841</width>
       <height>571</height>
      </rect>
     </property>
    </widget>
+   <zorder>treeView</zorder>
+   <zorder>menu</zorder>
+   <zorder>fileDownload</zorder>
+   <zorder>folderDownload</zorder>
   </widget>
  </widget>
  <resources>
-  <include location="resource.qrc"/>
+  <include location="icon/icon.qrc"/>
  </resources>
  <connections>
   <connection>
    <sender>plusMenu</sender>
    <signal>toggled(bool)</signal>
-   <receiver>Menu</receiver>
+   <receiver>MenuUpload</receiver>
    <slot>setHidden(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>848</x>
-     <y>607</y>
+     <x>810</x>
+     <y>650</y>
     </hint>
     <hint type="destinationlabel">
-     <x>814</x>
-     <y>497</y>
+     <x>724</x>
+     <y>550</y>
     </hint>
    </hints>
   </connection>
   <connection>
    <sender>plusMenu</sender>
    <signal>toggled(bool)</signal>
-   <receiver>Menu</receiver>
+   <receiver>MenuUpload</receiver>
    <slot>hide()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>868</x>
-     <y>613</y>
+     <x>810</x>
+     <y>650</y>
     </hint>
     <hint type="destinationlabel">
-     <x>804</x>
-     <y>496</y>
+     <x>714</x>
+     <y>550</y>
     </hint>
    </hints>
   </connection>
   <connection>
    <sender>plusMenu</sender>
    <signal>toggled(bool)</signal>
-   <receiver>Menu</receiver>
+   <receiver>MenuUpload</receiver>
    <slot>setHidden(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>872</x>
-     <y>616</y>
+     <x>810</x>
+     <y>650</y>
     </hint>
     <hint type="destinationlabel">
-     <x>786</x>
-     <y>495</y>
+     <x>696</x>
+     <y>550</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>plusMenu</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>MenuUpload</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>831</x>
+     <y>662</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>796</x>
+     <y>605</y>
     </hint>
    </hints>
   </connection>

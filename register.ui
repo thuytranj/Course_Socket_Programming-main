@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1000</width>
-    <height>800</height>
+    <width>890</width>
+    <height>704</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,8 +17,8 @@
    <widget class="QWidget" name="widget" native="true">
     <property name="geometry">
      <rect>
-      <x>210</x>
-      <y>130</y>
+      <x>140</x>
+      <y>90</y>
       <width>581</width>
       <height>541</height>
      </rect>
@@ -26,8 +26,8 @@
     <widget class="QLabel" name="dangky">
      <property name="geometry">
       <rect>
-       <x>20</x>
-       <y>45</y>
+       <x>35</x>
+       <y>50</y>
        <width>510</width>
        <height>131</height>
       </rect>
@@ -36,6 +36,7 @@
       <font>
        <family>Public Sans Black</family>
        <pointsize>31</pointsize>
+       <weight>75</weight>
        <bold>true</bold>
       </font>
      </property>
@@ -46,16 +47,16 @@
       <string>REGISTER</string>
      </property>
      <property name="textFormat">
-      <enum>Qt::TextFormat::MarkdownText</enum>
+      <enum>Qt::PlainText</enum>
      </property>
      <property name="alignment">
-      <set>Qt::AlignmentFlag::AlignCenter</set>
+      <set>Qt::AlignCenter</set>
      </property>
     </widget>
     <widget class="QPushButton" name="Back">
      <property name="geometry">
       <rect>
-       <x>110</x>
+       <x>130</x>
        <y>390</y>
        <width>141</width>
        <height>31</height>
@@ -114,7 +115,7 @@ border-radius: 20px;</string>
     <widget class="QLineEdit" name="password">
      <property name="geometry">
       <rect>
-       <x>115</x>
+       <x>130</x>
        <y>240</y>
        <width>321</width>
        <height>31</height>
@@ -134,7 +135,7 @@ padding-bottom: 1px;</string>
       <number>100</number>
      </property>
      <property name="echoMode">
-      <enum>QLineEdit::EchoMode::Password</enum>
+      <enum>QLineEdit::Password</enum>
      </property>
      <property name="placeholderText">
       <string>Password</string>
@@ -143,7 +144,7 @@ padding-bottom: 1px;</string>
     <widget class="QLineEdit" name="username">
      <property name="geometry">
       <rect>
-       <x>115</x>
+       <x>130</x>
        <y>170</y>
        <width>321</width>
        <height>31</height>
@@ -163,7 +164,7 @@ padding-bottom: 1px;</string>
       <number>100</number>
      </property>
      <property name="echoMode">
-      <enum>QLineEdit::EchoMode::Normal</enum>
+      <enum>QLineEdit::Normal</enum>
      </property>
      <property name="placeholderText">
       <string>Username</string>
@@ -172,7 +173,7 @@ padding-bottom: 1px;</string>
     <widget class="QLineEdit" name="confirm_password">
      <property name="geometry">
       <rect>
-       <x>115</x>
+       <x>130</x>
        <y>310</y>
        <width>321</width>
        <height>31</height>
@@ -192,7 +193,7 @@ padding-bottom: 1px;</string>
       <number>100</number>
      </property>
      <property name="echoMode">
-      <enum>QLineEdit::EchoMode::Password</enum>
+      <enum>QLineEdit::Password</enum>
      </property>
      <property name="placeholderText">
       <string>Confirm Password</string>
@@ -201,7 +202,7 @@ padding-bottom: 1px;</string>
     <widget class="QPushButton" name="register_3">
      <property name="geometry">
       <rect>
-       <x>290</x>
+       <x>310</x>
        <y>390</y>
        <width>141</width>
        <height>31</height>
@@ -248,16 +249,6 @@ background-color: rgb(255, 255, 255);
     <zorder>confirm_password</zorder>
     <zorder>register_3</zorder>
    </widget>
-  </widget>
-  <widget class="QMenuBar" name="menubar">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>1000</width>
-     <height>24</height>
-    </rect>
-   </property>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>

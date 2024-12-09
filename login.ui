@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1000</width>
-    <height>800</height>
+    <width>890</width>
+    <height>710</height>
    </rect>
   </property>
   <property name="cursor">
@@ -23,10 +23,10 @@
    <widget class="QWidget" name="widget" native="true">
     <property name="geometry">
      <rect>
-      <x>220</x>
-      <y>140</y>
-      <width>551</width>
-      <height>511</height>
+      <x>140</x>
+      <y>90</y>
+      <width>581</width>
+      <height>541</height>
      </rect>
     </property>
     <widget class="QPushButton" name="loginbutton">
@@ -35,7 +35,7 @@
      </property>
      <property name="geometry">
       <rect>
-       <x>200</x>
+       <x>215</x>
        <y>310</y>
        <width>150</width>
        <height>31</height>
@@ -45,16 +45,16 @@
       <cursorShape>ArrowCursor</cursorShape>
      </property>
      <property name="focusPolicy">
-      <enum>Qt::FocusPolicy::StrongFocus</enum>
+      <enum>Qt::NoFocus</enum>
      </property>
      <property name="contextMenuPolicy">
-      <enum>Qt::ContextMenuPolicy::DefaultContextMenu</enum>
+      <enum>Qt::NoContextMenu</enum>
      </property>
      <property name="toolTipDuration">
       <number>-1</number>
      </property>
      <property name="layoutDirection">
-      <enum>Qt::LayoutDirection::LeftToRight</enum>
+      <enum>Qt::LeftToRight</enum>
      </property>
      <property name="styleSheet">
       <string notr="true">QPushButton
@@ -104,7 +104,7 @@ background-color: rgb(255, 255, 255);
     <widget class="QLabel" name="Ask_2">
      <property name="geometry">
       <rect>
-       <x>165</x>
+       <x>180</x>
        <y>370</y>
        <width>221</width>
        <height>31</height>
@@ -114,6 +114,7 @@ background-color: rgb(255, 255, 255);
       <font>
        <family>Nunito SemiBold</family>
        <pointsize>11</pointsize>
+       <weight>50</weight>
        <italic>false</italic>
        <bold>false</bold>
        <strikeout>false</strikeout>
@@ -125,19 +126,19 @@ background-color: rgb(255, 255, 255);
       <cursorShape>ArrowCursor</cursorShape>
      </property>
      <property name="layoutDirection">
-      <enum>Qt::LayoutDirection::LeftToRight</enum>
+      <enum>Qt::LeftToRight</enum>
      </property>
      <property name="frameShape">
-      <enum>QFrame::Shape::NoFrame</enum>
+      <enum>QFrame::NoFrame</enum>
      </property>
      <property name="text">
       <string>OR</string>
      </property>
      <property name="textFormat">
-      <enum>Qt::TextFormat::PlainText</enum>
+      <enum>Qt::PlainText</enum>
      </property>
      <property name="alignment">
-      <set>Qt::AlignmentFlag::AlignCenter</set>
+      <set>Qt::AlignCenter</set>
      </property>
      <property name="indent">
       <number>0</number>
@@ -146,7 +147,7 @@ background-color: rgb(255, 255, 255);
     <widget class="QLabel" name="dangnhap">
      <property name="geometry">
       <rect>
-       <x>20</x>
+       <x>35</x>
        <y>34</y>
        <width>510</width>
        <height>131</height>
@@ -156,6 +157,7 @@ background-color: rgb(255, 255, 255);
       <font>
        <family>Public Sans Black</family>
        <pointsize>31</pointsize>
+       <weight>75</weight>
        <bold>true</bold>
       </font>
      </property>
@@ -166,10 +168,10 @@ background-color: rgb(255, 255, 255);
       <string>LOG IN</string>
      </property>
      <property name="textFormat">
-      <enum>Qt::TextFormat::MarkdownText</enum>
+      <enum>Qt::PlainText</enum>
      </property>
      <property name="alignment">
-      <set>Qt::AlignmentFlag::AlignCenter</set>
+      <set>Qt::AlignCenter</set>
      </property>
     </widget>
     <widget class="QLabel" name="bg">
@@ -178,9 +180,9 @@ background-color: rgb(255, 255, 255);
      </property>
      <property name="geometry">
       <rect>
-       <x>20</x>
-       <y>14</y>
-       <width>510</width>
+       <x>40</x>
+       <y>20</y>
+       <width>501</width>
        <height>481</height>
       </rect>
      </property>
@@ -198,7 +200,7 @@ border-radius: 20px;</string>
     <widget class="QLineEdit" name="username">
      <property name="geometry">
       <rect>
-       <x>115</x>
+       <x>130</x>
        <y>168</y>
        <width>321</width>
        <height>31</height>
@@ -218,7 +220,7 @@ padding-bottom: 1px;</string>
       <number>100</number>
      </property>
      <property name="echoMode">
-      <enum>QLineEdit::EchoMode::Normal</enum>
+      <enum>QLineEdit::Normal</enum>
      </property>
      <property name="placeholderText">
       <string>Username</string>
@@ -227,7 +229,7 @@ padding-bottom: 1px;</string>
     <widget class="QLineEdit" name="password">
      <property name="geometry">
       <rect>
-       <x>115</x>
+       <x>130</x>
        <y>238</y>
        <width>321</width>
        <height>31</height>
@@ -247,7 +249,7 @@ padding-bottom: 1px;</string>
       <number>100</number>
      </property>
      <property name="echoMode">
-      <enum>QLineEdit::EchoMode::Password</enum>
+      <enum>QLineEdit::Password</enum>
      </property>
      <property name="placeholderText">
       <string>Password</string>
@@ -256,7 +258,7 @@ padding-bottom: 1px;</string>
     <widget class="QPushButton" name="Register">
      <property name="geometry">
       <rect>
-       <x>335</x>
+       <x>350</x>
        <y>420</y>
        <width>91</width>
        <height>31</height>
@@ -270,7 +272,7 @@ padding-bottom: 1px;</string>
       </font>
      </property>
      <property name="layoutDirection">
-      <enum>Qt::LayoutDirection::LeftToRight</enum>
+      <enum>Qt::LeftToRight</enum>
      </property>
      <property name="styleSheet">
       <string notr="true">QPushButton {
@@ -302,7 +304,7 @@ border-radius: 15px;
     <widget class="QLabel" name="Ask">
      <property name="geometry">
       <rect>
-       <x>125</x>
+       <x>140</x>
        <y>420</y>
        <width>181</width>
        <height>31</height>
@@ -312,6 +314,7 @@ border-radius: 15px;
       <font>
        <family>Nunito SemiBold</family>
        <pointsize>11</pointsize>
+       <weight>50</weight>
        <italic>false</italic>
        <bold>false</bold>
        <strikeout>false</strikeout>
@@ -323,19 +326,19 @@ border-radius: 15px;
       <cursorShape>ArrowCursor</cursorShape>
      </property>
      <property name="layoutDirection">
-      <enum>Qt::LayoutDirection::LeftToRight</enum>
+      <enum>Qt::LeftToRight</enum>
      </property>
      <property name="frameShape">
-      <enum>QFrame::Shape::NoFrame</enum>
+      <enum>QFrame::NoFrame</enum>
      </property>
      <property name="text">
       <string>To Register New Account</string>
      </property>
      <property name="textFormat">
-      <enum>Qt::TextFormat::PlainText</enum>
+      <enum>Qt::PlainText</enum>
      </property>
      <property name="alignment">
-      <set>Qt::AlignmentFlag::AlignCenter</set>
+      <set>Qt::AlignCenter</set>
      </property>
      <property name="indent">
       <number>0</number>
@@ -344,7 +347,7 @@ border-radius: 15px;
     <widget class="QLabel" name="Ask_3">
      <property name="geometry">
       <rect>
-       <x>305</x>
+       <x>320</x>
        <y>420</y>
        <width>41</width>
        <height>31</height>
@@ -354,6 +357,7 @@ border-radius: 15px;
       <font>
        <family>Wingdings 3</family>
        <pointsize>11</pointsize>
+       <weight>50</weight>
        <italic>false</italic>
        <bold>false</bold>
        <strikeout>false</strikeout>
@@ -365,19 +369,19 @@ border-radius: 15px;
       <cursorShape>ArrowCursor</cursorShape>
      </property>
      <property name="layoutDirection">
-      <enum>Qt::LayoutDirection::LeftToRight</enum>
+      <enum>Qt::LeftToRight</enum>
      </property>
      <property name="frameShape">
-      <enum>QFrame::Shape::NoFrame</enum>
+      <enum>QFrame::NoFrame</enum>
      </property>
      <property name="text">
       <string>&quot;</string>
      </property>
      <property name="textFormat">
-      <enum>Qt::TextFormat::PlainText</enum>
+      <enum>Qt::PlainText</enum>
      </property>
      <property name="alignment">
-      <set>Qt::AlignmentFlag::AlignCenter</set>
+      <set>Qt::AlignCenter</set>
      </property>
      <property name="indent">
       <number>0</number>
